@@ -1,0 +1,33 @@
+{
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "connect-mongo": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "express-ws": "^5.0.2",
+    "http": "^0.0.1-security",
+    "http-status-codes": "^2.3.0",
+    "mongodb": "^6.7.0",
+    "mongoose": "^8.4.3",
+    "morgan": "^1.10.0",
+    "passport": "^0.7.0",
+    "passport-google-oauth2": "^0.2.0",
+    "passport-jwt": "^4.0.1",
+    "sinon": "^18.0.0",
+    "socket.io": "^4.7.5",
+    "uuid": "^10.0.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "babel-jest": "^29.7.0",
+    "chai-http": "^4.4.0",
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "NODE_ENV=test jest --config=jest.config.js"
+  }
+}
