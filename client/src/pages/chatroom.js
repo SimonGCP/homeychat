@@ -200,7 +200,7 @@ function Chatroom(props) {
                         <button onClick={leaveRoom} className='bg-red-700 p-2 rounded-md border-2 border-black hover:bg-red-500 transition-all'>Leave</button>
                     </div>
 
-                    <div ref={chatsRef} className='chat-interface flex flex-col w-5/6 h-4/6 self-center bg-slate-200 rounded-lg overflow-y-auto px-4 py-2'>
+                    <div ref={chatsRef} className='chat-interface flex flex-col w-5/6 h-4/6 self-center bg-slate-200 rounded-t-md border-2 border-b-0 border-slate-700 overflow-y-auto px-4 py-2'>
                         { roomMessages.map((message, index) => (
                             <div key={index} id='chats' className='flex flex-col-reverse mb-4'>
                                 { message.author && (
@@ -219,8 +219,8 @@ function Chatroom(props) {
                     </div>
 
                     <div className='w-full flex justify-center'>
-                        <input type='text' placeholder='message here' value={message} onChange={updateMessage} className='bg-slate-200 rounded-md border-2 border-slate-700 w-4/6 h-14 t-4'/>
-                        <button type='submit' onClick={() => sendMessageToWs(userDetails.username, message, currentRoomID)} className='bg-blue-200 rounded-md border-2 border-slate-700 hover:bg-blue-400 w-1/6'>send</button>
+                        <input type='text' placeholder='message here' value={message} onChange={updateMessage} className='bg-slate-200 rounded-bl-md border-2 border-slate-700 w-4/6 h-14 t-4'/>
+                        <button type='submit' onClick={() => sendMessageToWs(userDetails.username, message, currentRoomID)} className='bg-blue-200 rounded-br-md border-2 border-slate-700 hover:bg-blue-400 w-1/6'>send</button>
                     </div>
                 </div>
             )}
