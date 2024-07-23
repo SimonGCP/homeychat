@@ -72,6 +72,17 @@ describe('UNIT TESTS FOR AUTHORIZATION', () => {
             expect(response.status).toBe(StatusCodes.BAD_REQUEST);
             expect(mockDatabase.length).toBe(0);
         });
+
+        test('it should not allow a user to register if their name contains forbidden characters', async () => {
+            const username = '\\simon', password = 'password';
+
+            const response = await request(app)
+                .post('/signup')
+                .send({ username, password });
+
+            expect(response.status).toBe(StatusCodes.BAD_REQUEST);
+            expect(mockDatabase.length).toBe(0);
+        });
     });
 
     describe('testing login', () => {
@@ -121,6 +132,14 @@ describe('UNIT TESTS FOR AUTHORIZATION', () => {
 
             expect(response.status).toBe(StatusCodes.BAD_REQUEST);
             expect(response.body.message).toMatch('Missing username or password');
+        });
+
+        test('it should not log in if parameters are missing', async () => {
+          const response = await request(app)
+              .post('/login');
+
+          expect(response.status).toBe(StatusCodes.BAD_REQUEST);
+          expect(response.body.message).toMatch('Missing username or password');
         });
     });
 });

@@ -17,16 +17,16 @@ authRouter.use(express.json());
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 
-passport.use(new GoogleStrategy({
-		clientID: GOOGLE_CLIENT_ID,
-		clientSecret: GOOGLE_CLIENT_SECRET,
-		callbackURL: "http://localhost:8000/google/callback",
-		passReqToCallback: true,
-	},
-	(request, accessToken, refreshToken, profile, done) => {
-		return done(null, profile);
-	}
-));
+//passport.use(new GoogleStrategy({
+//		clientID: GOOGLE_CLIENT_ID,
+//		clientSecret: GOOGLE_CLIENT_SECRET,
+//		callbackURL: "http://localhost:8000/google/callback",
+//		passReqToCallback: true,
+//	},
+//	(request, accessToken, refreshToken, profile, done) => {
+//		return done(null, profile);
+//	}
+//));
 
 function isLoggedIn(req, res, next) {
 	req.user ? next() : res.sendStatus(StatusCodes.UNAUTHORIZED);
@@ -124,6 +124,16 @@ authRouter.get('/account', async (req, res) => {
 
 const minUsernameLength = 3, minPasswordLength = 5;
 
+function containsForbiddenCharacters (string, characters) {
+    for(const char of characters) {
+        if(string.indexOf(char) > -1) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 authRouter.post('/signup', async (req, res) => {
 	const { username, password } = req.body;
 
@@ -135,6 +145,12 @@ authRouter.post('/signup', async (req, res) => {
 		return res.status(StatusCodes.BAD_REQUEST).json({ message: 'username or password too short' });
 	}
 
+    const forbiddenCharacters = '!@#$%^&*() {}[];:\'"\\|/?.,<>`~'
+
+    if (containsForbiddenCharacters(username, forbiddenCharacters)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ message: 'username contains forbidden character(s)' });
+    }
+    
 	try {
 		const existingAccount = await Account.findOne({ username });
 
