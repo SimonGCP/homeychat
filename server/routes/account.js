@@ -26,8 +26,6 @@ accountRouter.get('/friend-list', async (req, res) => {
             friendList.push(await Account.findOne({ _id: friend }));
         }
 
-        console.log(friendList);
-
         res.status(StatusCodes.OK).json({ friendList });
     } catch (err) {
         console.log(err);
@@ -51,6 +49,10 @@ accountRouter.post('/add-friend', async (req, res) => {
 
         if (!user || !friend) {
             return bad_request(res, 'bad id');
+        }
+
+        if (user === friend) {
+            return bad_request(res, 'cannot add self as friend');
         }
     
         updatedUser = await Account.findByIdAndUpdate(userId, {

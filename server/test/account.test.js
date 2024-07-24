@@ -107,6 +107,15 @@ describe('UNIT TESTS FOR ACCOUNTS', () => {
             expect(response.status).toBe(StatusCodes.BAD_REQUEST);
             expect(exampleUser.friends.length).toBe(0);
         });
+
+        test('it should return bad request if a user tries to add themself as a friend', async () => {
+            const response = await request(app)
+                .post('/account/add-friend')
+                .send({ userId: exampleUser._id, friendId: exampleUser._id })
+
+            expect(response.status).toBe(StatusCodes.BAD_REQUEST);
+            expect(exampleUser.friends.length).toBe(0);
+        })
     });
 
     describe('testing removing friends', () => {
