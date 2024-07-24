@@ -10,6 +10,7 @@ const { createServer } = require('http');
 
 const authRouter = require('./routes/auth.js');
 const chatRouter = require('./routes/chatroom.js');
+const accountRouter = require('./routes/account.js');
 
 dotenv.config();
 
@@ -58,6 +59,7 @@ app.use(logger('dev'));
 
 app.use('/', authRouter);
 app.use('/rooms', chatRouter);
+app.use('/account', accountRouter);
 
 app.get('/ping', (req, res) => {
 	res.status(200).send('pong');

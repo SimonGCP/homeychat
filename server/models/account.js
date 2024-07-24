@@ -15,6 +15,9 @@ const accountSchema = new mongoose.Schema({
     },
     currentRoom: {
         type: String,
+    },
+    friends: {
+        type: Array,
     }
 });
 
