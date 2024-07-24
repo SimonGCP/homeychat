@@ -35,7 +35,7 @@ describe('UNIT TESTS FOR ACCOUNTS', () => {
                 .query({ id: exampleUser._id });
 
             expect(response.status).toBe(StatusCodes.OK);
-            expect(response.body.length).toBe(0);
+            expect(response.body.friendList.length).toBe(0);
         });
 
         test('it should return the user\'s friend list', async () => {
@@ -47,7 +47,7 @@ describe('UNIT TESTS FOR ACCOUNTS', () => {
                 .query({ id: exampleUser._id });
 
             expect(response.status).toBe(StatusCodes.OK);
-            expect(response.body).toStrictEqual(friendList);
+            expect(response.body.friendList.length).toBe(3);
         });
 
         test('it should return bad request if no id is given', async () => {

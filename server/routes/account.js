@@ -20,8 +20,17 @@ accountRouter.get('/friend-list', async (req, res) => {
             return bad_request(res, 'bad id');
         }
 
-        res.status(StatusCodes.OK).json(user.friends);
+        const friendList = [];
+        for (friend of user.friends) {
+            const friendDetails = await Account.findOne({_id: friend});
+            friendList.push(await Account.findOne({ _id: friend }));
+        }
+
+        console.log(friendList);
+
+        res.status(StatusCodes.OK).json({ friendList });
     } catch (err) {
+        console.log(err);
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
     }
 });
@@ -87,6 +96,22 @@ accountRouter.post('/remove-friend', async (req, res) => {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
     }
     return res.sendStatus(StatusCodes.OK);
+});
+
+accountRouter.get('/user', async (req, res) => {
+    const { id } = req.query;
+
+    if (!id) {
+        return bad_request(res, 'missing id');
+    }
+
+    try {
+        const user = await Account.findOne({ _id: id });
+
+        return res.status(StatusCodes.OK).json(user);
+    } catch(err) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    }
 });
 
 module.exports = accountRouter;

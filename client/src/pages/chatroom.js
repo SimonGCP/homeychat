@@ -189,6 +189,10 @@ function Chatroom(props) {
         navigate('/');
     }
 
+    const openAuthorMenu = () => {
+        console.log('here');
+    }
+
     return (
         <div>
             { (userDetails) && (
@@ -208,7 +212,7 @@ function Chatroom(props) {
                                         <div className={`rounded-md ${message.author === userDetails.username ? 'bg-emerald-700' : 'bg-cyan-800 float-right'} text-white py-4 px-3 shadow-md`}>
                                             {message.message}
                                         </div>
-                                        <div className='pl-2 text-gray-600'>{message.author}</div>
+                                        <button onClick={() => openAuthorMenu()} className='pl-2 text-gray-600'>{message.author}</button>
                                     </>
                                 )}
                                 { !message.author && (

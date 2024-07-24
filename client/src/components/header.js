@@ -13,6 +13,7 @@ function Header() {
     const [ loggedIn, setLoggedIn ] = useState(false);
     const [ showSidebar, setShowSidebar ] = useState(false);
     const [ username, setUsername ] = useState('');
+    const [ id, setId ] = useState('');
 
     const navigate = useNavigate();
 
@@ -44,6 +45,12 @@ function Header() {
         }
     }
 
+    const navigateToFriends = () => {
+        if (username !== '') {
+            navigate(`/account/friends?id=${id}`);
+        }
+    }
+
     const logout = async () => {
         await axios.post('http://localhost:8000/logout', {}, {
             headers: {
@@ -72,6 +79,7 @@ function Header() {
         })
         .then((response) => {
             setUsername(response.data.username);
+            setId(response.data._id);
             setLoggedIn(true);
 
             console.log(`Logged in with username ${response.data.username}`);
@@ -131,6 +139,7 @@ function Header() {
 
             <div className={`sidebar h-full ${showSidebar ? 'w-1/6' : 'w-0'} bg-slate-500 fixed top-16 right-0 bg-opacity-75 transition-all z-50`}>
                 <button onClick={navigateToAccount} className='w-full h-12 bg-slate-600 hover:bg-slate-800 hover:text-white transition-all'>My account</button>
+                <button onClick={navigateToFriends} className='w-full h-12 bg-slate-600 hover:bg-slate-800 hover:text-white transition-all'>My friends</button>
                 <button onClick={logout} className='w-full h-12 bg-slate-600 hover:bg-slate-800 hover:text-white transition-all'>Log out</button>
             </div>
         </>
