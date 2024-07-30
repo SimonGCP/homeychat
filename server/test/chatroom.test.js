@@ -153,7 +153,7 @@ describe('UNIT TESTS FOR CHATROOMS', () => {
                     if (push) {
                         room.users.push(exampleUserId);
                     } else {
-                        const index = room.users.indexOf(exampleUserId);
+                        const index = room.users.indexOf({ _id: exampleUserId });
                         room.users.splice(index, 1);
                     }
                     return true;
@@ -175,7 +175,7 @@ describe('UNIT TESTS FOR CHATROOMS', () => {
                     .post('/rooms/update-list')
                     .send({ 
                         roomID: exampleRoom1._id,
-                        userID: exampleUserId,
+                        user: { _id: exampleUserId },
                         push: true,
                     });
                 
@@ -209,14 +209,14 @@ describe('UNIT TESTS FOR CHATROOMS', () => {
 
             test('it should remove a user from the room user list', async () => {
                 var room = mockDatabase[0];
-                room.users = [exampleUserId];
+                room.users = [{ _id: exampleUserId }];
                 push = false;
 
                 const response = await request(app)
                     .post('/rooms/update-list')
                     .send({
                         roomID: room._id,
-                        userID: exampleUserId,
+                        user: { _id: exampleUserId },
                         push: false,
                     });
                 

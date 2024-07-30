@@ -1,6 +1,7 @@
 const express = require('express');
 const { StatusCodes } = require('http-status-codes');
 const Account = require('../models/account.js');
+const FriendRequest = require('../models/friend-request.js');
 const bad_request = require('../utils/utils.js');
 
 const accountRouter = express.Router();
@@ -30,6 +31,48 @@ accountRouter.get('/friend-list', async (req, res) => {
     } catch (err) {
         console.log(err);
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    }
+});
+
+accountRouter.post('/send-friend-request', async (req, res) => {
+    const { userId, friendId } = req.body;
+
+    if (!userId || !friendId) {
+        return bad_request(res, 'missing parameter');
+    }
+
+    try {
+        // check if friend request already exists
+        const request = FriendRequest.find({ user: friendId, friend: userId });
+    
+        // if friend request already exists, add to users' friend list
+        if (request) {
+            Account.findByIdAndUpdate(userId, {
+                '$addToSet': {'friends': friendId},
+            }); 
+
+            Account.findByIdAndUpdate(friendId, {
+                '$addToSet': {'friends': userId},
+            });
+
+            FriendRequest.deleteOne({
+                friendId: userId,
+                userId: friendId,
+            });
+
+            return res.status(StatusCodes.OK).send({ message: 'friend request accepted' });
+        } else {
+            const newRequest = new FriendRequest({
+                userId, friendId,
+            });
+
+            FriendRequest.create(newRequest);
+
+            return res.status(StatusCodes.OK).send({ message: 'friend request created' });
+        }
+    } catch(err) {
+        console.log(err);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ message: 'error creating friend request' });
     }
 });
 

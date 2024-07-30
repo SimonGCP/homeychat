@@ -60,9 +60,9 @@ chatRouter.get('/room-details', async (req, res) => {
 });
 
 chatRouter.post('/update-list', async (req, res) => {
-    const { userID, roomID, push } = req.body;
+    const { user, roomID, push } = req.body;
 
-    if (!userID || !roomID || push === undefined ) {
+    if (!user || !roomID || push === undefined ) {
         return res.status(StatusCodes.BAD_REQUEST).json({ message: "Missing parameters" });
     }
 
@@ -71,7 +71,7 @@ chatRouter.post('/update-list', async (req, res) => {
         const date = new Date();
         if (push) {
             updatedChatroom = await Chatroom.findByIdAndUpdate(roomID, {
-                '$addToSet': {'users': userID},
+                '$addToSet': {'users': user},
                 '$set': {'lastModified': date }
             });
 
@@ -79,18 +79,19 @@ chatRouter.post('/update-list', async (req, res) => {
                 req.session.user.currentRoom = roomID;
             } 
 
-            await Account.findByIdAndUpdate(userID, {
+            await Account.findByIdAndUpdate(user._id, {
                 '$set': {'currentRoom': roomID },
             });
         } else {
             updatedChatroom = await Chatroom.findByIdAndUpdate(roomID, {
-                '$pull': {'users': userID}
+                '$pull': {'users': user}
             });
 
             if (req.session.user) {
                 req.session.user.currentRoom = '';
             } 
-            await Account.findByIdAndUpdate(userID, {
+
+            await Account.findByIdAndUpdate(user._id, {
                 '$set': {'currentRoom': '' },
             });
         }
