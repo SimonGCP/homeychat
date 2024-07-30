@@ -14,10 +14,12 @@ function Chatroom(props) {
     const location = useLocation();
 
     const [ currentRoomID, setCurrentRoomID ] = useState('');
-    const [ roomTopic, setRoomTopic ] = useState('');
     const [ message, setMessage ] = useState('');
+    const [ roomTopic, setRoomTopic ] = useState('');
     const [ roomMessages, setRoomMessages ] = useState([]);
+    const [ roomUsers, setRoomUsers ] = useState([]);
     const [ userDetails, setUserDetails ] = useState({});
+    const [ toggleUserList, setToggleUserList ] = useState(false);
 
     class Chat {
         constructor (author, message) {
@@ -39,9 +41,9 @@ function Chatroom(props) {
         })
         .then((response) => {
             console.log("got room details");
-            console.log(response);
             setRoomTopic(response.data.topic);
             setRoomMessages(response.data.messages);
+            setRoomUsers(response.data.users);
         })
         .catch((error) => {
             console.log(error);
@@ -51,6 +53,10 @@ function Chatroom(props) {
 
     const getInfo = async (roomID, username) => {
         const details = await getUserDetails();
+        if (!details) {
+            return;
+        }
+
         username = details.username;
         setUserDetails(details);
         console.log(details.username);
@@ -63,7 +69,7 @@ function Chatroom(props) {
 
         console.log('roomID, ', roomID);
         socket.send(JSON.stringify({room: roomID, username: details.username}));
-        await updateChatroomUserList(details._id, roomID, push);
+        await updateChatroomUserList(details, roomID, push);
     }
 
     useEffect(() => {
@@ -128,7 +134,7 @@ function Chatroom(props) {
             socket.off('connect', onConnect);
             socket.off('disconnect', onDisconnect);
             socket.off('message');
-            document.removeEventListener("keydown", listener);
+            document.removeEventListener('keydown', listener);
         };
     }, []);
 
@@ -189,10 +195,6 @@ function Chatroom(props) {
         navigate('/');
     }
 
-    const openAuthorMenu = () => {
-        console.log('here');
-    }
-
     return (
         <div>
             { (userDetails) && (
@@ -201,21 +203,33 @@ function Chatroom(props) {
                         <p className='text-xl text-center p-2'>Welcome to the chatroom, {userDetails.username}!
                             The topic is {roomTopic}.
                         </p>
-                        <button onClick={leaveRoom} className='bg-red-700 p-2 rounded-md border-2 border-black hover:bg-red-500 transition-all'>Leave</button>
+                        <button onClick={leaveRoom} className='bg-red-700 p-2 w-16 rounded-l-md border-2 border-black hover:bg-red-500 transition-all'>Leave</button>
+                        <div className='relative inline-block text-left'>
+                            <button onClick={() => setToggleUserList(!toggleUserList)} className='bg-slate-400 w-16 p-2 rounded-r-md border-2 border-l-0 border-black hover:bg-slate-500 transition-all'>Users</button>
+                            <div className='absolute right-0 mt-2 w-48 bg-white border border-black rounded-md'>
+                            { toggleUserList && (
+                                <div id='userDropdown' className='relative w-full text-center inline-block transition-all'>
+                                    { roomUsers && roomUsers.map((user, index) => ( 
+                                        <div key={index} className={`w-full border border-slate-700 bg-slate-400 ${userDetails.username === user.username ? 'bg-slate-400' : 'bg-slate-300'}`}>{user.username}</div>
+                                    )) }
+                                </div>
+                            )}
+                            </div>
+                        </div>
                     </div>
 
                     <div ref={chatsRef} className='chat-interface flex flex-col w-5/6 h-4/6 self-center bg-slate-200 rounded-t-md border-2 border-b-0 border-slate-700 overflow-y-auto px-4 py-2'>
-                        { roomMessages.map((message, index) => (
+                        { roomMessages && roomMessages.map((message, index) => (
                             <div key={index} id='chats' className='flex flex-col-reverse mb-4'>
                                 { message.author && (
                                     <>
                                         <div className={`rounded-md ${message.author === userDetails.username ? 'bg-emerald-700' : 'bg-cyan-800 float-right'} text-white py-4 px-3 shadow-md`}>
                                             {message.message}
                                         </div>
-                                        <button onClick={() => openAuthorMenu()} className='pl-2 text-gray-600'>{message.author}</button>
+                                        <p className='pl-2 text-gray-600'>{message.author}</p>
                                     </>
                                 )}
-                                { !message.author && (
+                                { !message.author && ( 
                                     <p className='text-slate-400'>{message}</p>
                                 )}
                             </div>

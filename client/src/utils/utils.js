@@ -16,13 +16,13 @@ export const getUserDetails = async () => {
     }
 }
 
-export const updateChatroomUserList = async (userID, roomID, push) => {
-    if (userID === '' || roomID === '') {
+export const updateChatroomUserList = async (user, roomID, push) => {
+    if (!user || roomID === '') {
         return;
     }
 
     await axios.post('http://localhost:8000/rooms/update-list', {
-        userID,
+        user,
         roomID,
         push,
     },{
